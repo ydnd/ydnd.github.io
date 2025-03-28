@@ -4,6 +4,33 @@
   
   
   <entry>
+    <title>Vite CVE-2025-30208</title>
+    <link href="/2025/03/28/Vite-CVE-2025-30208/"/>
+    <url>/2025/03/28/Vite-CVE-2025-30208/</url>
+    
+    <content type="html"><![CDATA[<h2 id="漏洞简介"><a href="#漏洞简介" class="headerlink" title="漏洞简介"></a>漏洞简介</h2><p>3 月 24 日，漏洞发现者在 GitHub 安全公告中披露了 Vite 存在的任意文件读取漏洞（漏洞编号：CVE-2025-30208，漏洞级别：高危），该漏洞源于Vite在其开发服务器模式下，提供了<code>@fs</code>机制，用于访问服务允许范围内的文件。对特定 URL 请求的路径校验不严格，导致可以通过在URL请求中添加特定参数（如<code>?raw??</code>或<code>?import&amp;raw??</code>），绕过原有用于阻止越权访问的server.fs.deny访问限制，从而可能读取服务器上的任意文件，包括项目源码、敏感配置文件等，导致严重的数据泄露风险。</p><h2 id="受影响版本"><a href="#受影响版本" class="headerlink" title="受影响版本"></a>受影响版本</h2><figure class="highlight apache"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs apache"><span class="hljs-attribute">6</span>.<span class="hljs-number">2</span>.<span class="hljs-number">0</span> &lt;= version &lt;=<span class="hljs-number">6</span>.<span class="hljs-number">2</span>.<span class="hljs-number">2</span><br><br><span class="hljs-attribute">6</span>.<span class="hljs-number">1</span>.<span class="hljs-number">0</span> &lt;= version &lt;=<span class="hljs-number">6</span>.<span class="hljs-number">1</span>.<span class="hljs-number">1</span><br><br><span class="hljs-attribute">6</span>.<span class="hljs-number">0</span>.<span class="hljs-number">0</span> &lt;= version &lt;=<span class="hljs-number">6</span>.<span class="hljs-number">0</span>.<span class="hljs-number">11</span><br><br><span class="hljs-attribute">5</span>.<span class="hljs-number">0</span>.<span class="hljs-number">0</span> &lt;= version &lt;=<span class="hljs-number">5</span>.<span class="hljs-number">4</span>.<span class="hljs-number">14</span><br><br><span class="hljs-attribute">version</span> &lt;=<span class="hljs-number">4</span>.<span class="hljs-number">5</span>.<span class="hljs-number">9</span><br></code></pre></td></tr></table></figure><h2 id="修复建议"><a href="#修复建议" class="headerlink" title="修复建议"></a>修复建议</h2><figure class="highlight apache"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs apache"><span class="hljs-attribute">Vite</span> &gt;= <span class="hljs-number">6</span>.<span class="hljs-number">2</span>.<span class="hljs-number">3</span><br><span class="hljs-attribute">1</span>.<span class="hljs-number">2</span> &lt;= Vite &lt; <span class="hljs-number">6</span>.<span class="hljs-number">2</span>.<span class="hljs-number">0</span><br><span class="hljs-attribute">0</span>.<span class="hljs-number">12</span> &lt;= Vite &lt; <span class="hljs-number">6</span>.<span class="hljs-number">1</span>.<span class="hljs-number">0</span><br><span class="hljs-attribute">4</span>.<span class="hljs-number">15</span> &lt;= Vite &lt; <span class="hljs-number">6</span>.<span class="hljs-number">0</span>.<span class="hljs-number">0</span><br><span class="hljs-attribute">5</span>.<span class="hljs-number">10</span> &lt;= Vite &lt; <span class="hljs-number">5</span>.<span class="hljs-number">0</span>.<span class="hljs-number">0</span><br></code></pre></td></tr></table></figure><h3 id="修复指南"><a href="#修复指南" class="headerlink" title="修复指南"></a>修复指南</h3><p>1.优先升级到官方修复版本</p><p>2.确认当前Vite版本</p><p>项目下使用命令，或者直接查看package.json找到版本号</p><figure class="highlight coffeescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs coffeescript"><span class="hljs-built_in">npm</span> list vite<br></code></pre></td></tr></table></figure><p>3.升级Vite</p><figure class="highlight apache"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs apache"><span class="hljs-attribute">npm</span> install vite@<span class="hljs-number">4</span>.<span class="hljs-number">5</span>.<span class="hljs-number">10</span> # 若之前使用的是 <span class="hljs-number">4</span>.x 版本<br><span class="hljs-attribute">npm</span> install vite@<span class="hljs-number">5</span>.<span class="hljs-number">4</span>.<span class="hljs-number">15</span> # 若之前使用的是 <span class="hljs-number">5</span>.x 版本<br><span class="hljs-attribute">npm</span> install vite@<span class="hljs-number">6</span>.<span class="hljs-number">0</span>.<span class="hljs-number">12</span> # 若之前使用的是 <span class="hljs-number">6</span>.<span class="hljs-number">0</span>.x 版本<br><span class="hljs-attribute">npm</span> install vite@<span class="hljs-number">6</span>.<span class="hljs-number">1</span>.<span class="hljs-number">2</span> # 若之前使用的是 <span class="hljs-number">6</span>.<span class="hljs-number">1</span>.x 版本<br><span class="hljs-attribute">npm</span> install vite@<span class="hljs-number">6</span>.<span class="hljs-number">2</span>.<span class="hljs-number">3</span> # 若之前使用的是 <span class="hljs-number">6</span>.<span class="hljs-number">2</span>.x 版本<br></code></pre></td></tr></table></figure><p>4.再次验证保证Vite对于此漏洞修复</p><h3 id="临时修复"><a href="#临时修复" class="headerlink" title="临时修复"></a>临时修复</h3><p>1.移除 <code>--host</code> 参数</p><p>如果你在启动开发服务器时使用了 <code>--host</code> 参数，将其移除。例如，将启动命令从：</p><figure class="highlight nginx"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs nginx"><span class="hljs-attribute">npx</span> vite --host <span class="hljs-number">0.0.0.0</span><br></code></pre></td></tr></table></figure><p>改为：</p><figure class="highlight ebnf"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs ebnf"><span class="hljs-attribute">npx vite</span><br></code></pre></td></tr></table></figure><p>2.配置 <code>server.host</code></p><p>若在 <code>vite.config.js</code> 或 <code>vite.config.ts</code> 中配置了 <code>server.host</code>，将其注释或修改为仅允许本地访问。</p><h2 id="漏洞复现"><a href="#漏洞复现" class="headerlink" title="漏洞复现"></a>漏洞复现</h2><p>1.安装Vite环境</p><p>创建一个项目文件夹，使用CMD</p><p>执行</p><figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs sql">npm <span class="hljs-keyword">create</span> vite<span class="hljs-variable">@latest</span> test <span class="hljs-operator">-</span>y <span class="hljs-comment">-- --template vue-ts</span><br></code></pre></td></tr></table></figure><p><img src="G:\审计\CVE-2025-30208\README\image-20250328084938374.png" alt="image-20250328084938374"></p><p>会得到<code>&quot;vite&quot;: &quot;^6.2.0&quot;</code>，这里的<code>^</code>符号表示安装兼容的最新版本，它允许安装的版本在不改变主版本号的前提下，更新次版本号和补丁版本号。所以如果急着直接执行<code>npm install</code>，所安装的Vite版本会是不受影响的<code>6.2.3</code>。（其他受影响版本同理）。</p><p><strong>这也是官方在依赖管理层面提供的一种便捷修补方式。</strong></p><p>所以这里要进来修改package.json，把 ‘^’ 去掉</p><p>把它搞成受攻击的版本6.2.0</p><p><img src="/images/image-20250328085224706.png" alt="image-20250328085224706"></p><p><img src="/images/image-20250328085553859.png" alt="image-20250328085553859"></p><p><a href="http://localhost:5173/@fs/C://windows/win.ini?import&raw??">localhost:5173&#x2F;@fs&#x2F;C:&#x2F;&#x2F;windows&#x2F;win.ini?import&amp;raw??</a></p><p><img src="/images/image-20250328090245447.png" alt="image-20250328090245447"></p><h3 id="执行修复命令"><a href="#执行修复命令" class="headerlink" title="执行修复命令"></a>执行修复命令</h3><figure class="highlight apache"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs apache"><span class="hljs-attribute">npm</span> install vite@<span class="hljs-number">6</span>.<span class="hljs-number">2</span>.<span class="hljs-number">3</span><br></code></pre></td></tr></table></figure><p>修复后：<img src="/images/image-20250328094258812.png" alt="image-20250328094258812"></p><p>参考文章</p><p><a href="https://blog.csdn.net/misu6/article/details/146573012">Vite 任意文件读取漏洞分析复现 CVE-2025-30208-CSDN博客</a></p><p><a href="https://mp.weixin.qq.com/s/BsjllB8_K9gh4u1QfkMTsw">Vite任意文件读取漏洞复现（CVE-2025-30208）</a></p><p><a href="https://www.panziye.com/front/16376.html">Vite存在CVE-2025-30208安全漏洞（附修复方案和演示示例） _ 潘子夜个人博客</a></p><p><a href="https://blog.csdn.net/misu6/article/details/146573012">Vite 任意文件读取漏洞分析复现 CVE-2025-30208-CSDN博客</a></p><p><a href="https://www.xaitx.com/tech/2025-03-26.html">Vite 任意文件读取漏洞分析复现（CVE-2025-30208） | 小艾博客</a></p><p><a href="https://www.ctfiot.com/233845.html">复现与修复指南：Vite任意文件读取漏洞（CVE-2025-30208） | CTF导航</a></p><p><a href="https://blog.nsfocus.net/cve-2025-30208/">Vite任意文件读取漏洞 (CVE-2025-30208) – 绿盟科技技术博客</a></p>]]></content>
+    
+    
+    <categories>
+      
+      <category>漏洞复现</category>
+      
+    </categories>
+    
+    
+    <tags>
+      
+      <tag>vite</tag>
+      
+      <tag>文件读取</tag>
+      
+    </tags>
+    
+  </entry>
+  
+  
+  
+  <entry>
     <title>Shiro认证绕过CVE-2020-1957</title>
     <link href="/2025/03/26/Shiro%E8%AE%A4%E8%AF%81%E7%BB%95%E8%BF%87CVE-2020-1957/"/>
     <url>/2025/03/26/Shiro%E8%AE%A4%E8%AF%81%E7%BB%95%E8%BF%87CVE-2020-1957/</url>
@@ -21,6 +48,8 @@
     <tags>
       
       <tag>shiro</tag>
+      
+      <tag>拦截器绕过</tag>
       
     </tags>
     
@@ -46,6 +75,8 @@
     <tags>
       
       <tag>shiro</tag>
+      
+      <tag>默认密钥爆破</tag>
       
     </tags>
     
