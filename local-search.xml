@@ -4,6 +4,33 @@
   
   
   <entry>
+    <title>docker 拉取失败&amp;clash_for_linux丝滑拉取</title>
+    <link href="/2025/05/19/docker-%E6%8B%89%E5%8F%96%E5%A4%B1%E8%B4%A5-clash-for-linux%E4%B8%9D%E6%BB%91%E6%8B%89%E5%8F%96/"/>
+    <url>/2025/05/19/docker-%E6%8B%89%E5%8F%96%E5%A4%B1%E8%B4%A5-clash-for-linux%E4%B8%9D%E6%BB%91%E6%8B%89%E5%8F%96/</url>
+    
+    <content type="html"><![CDATA[<h1 id="docker-拉取失败-clash-for-linux丝滑拉取"><a href="#docker-拉取失败-clash-for-linux丝滑拉取" class="headerlink" title="docker 拉取失败???&amp;clash_for_linux丝滑拉取"></a><strong>docker 拉取失败</strong>???&amp;<strong>clash_for_linux</strong>丝滑拉取</h1><h2 id="clash安装"><a href="#clash安装" class="headerlink" title="clash安装"></a>clash安装</h2><p>详情：为了解决docker拉取镜像失败，让docker yml走代理，从而有了这篇文章</p><p>设备：ubuntu22</p><p>deb文件：<a href="https://github.com/clash-verge-rev/clash-verge-rev">clash-verge-rev&#x2F;clash-verge-rev：基于 Tauri 的现代 GUI 客户端，旨在在 Windows、macOS 和 Linux 中运行，以提供定制的代理体验</a></p><h3 id="安装教程"><a href="#安装教程" class="headerlink" title="安装教程"></a>安装教程</h3><h4 id="1-安装deb"><a href="#1-安装deb" class="headerlink" title="1.安装deb"></a>1.安装deb</h4><figure class="highlight apache"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs apache"><span class="hljs-attribute">sudo</span> dpkg -i Clash.Verge_2.<span class="hljs-number">2</span>.<span class="hljs-number">3</span>_amd64.deb<br></code></pre></td></tr></table></figure><p>有可能会出现缺少依赖的情况，使用下面的命令进行修复</p><figure class="highlight stylus"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs stylus">sudo apt <span class="hljs-attr">--fix-broken</span> install -<span class="hljs-attribute">y</span><br>sudo apt install flatpak -<span class="hljs-attribute">y</span><br>sudo dpkg -<span class="hljs-selector-tag">i</span> Clash<span class="hljs-selector-class">.Verge_2</span>.<span class="hljs-number">2.3</span>_amd64.deb<br></code></pre></td></tr></table></figure><h4 id="2-配置文件"><a href="#2-配置文件" class="headerlink" title="2.配置文件"></a>2.配置文件</h4><p>可以在应用点击打开了此时</p><p><img src="/images/docker-%E6%8B%89%E5%8F%96%E5%A4%B1%E8%B4%A5-clash-for-linux%E4%B8%9D%E6%BB%91%E6%8B%89%E5%8F%96/image-20250515100436736.png" alt="image-20250515100436736"></p><p>注意：如果导入失败，不一定是订阅链接问题，可以把你的购买机场地址放入浏览器，在里面点击导入clash<img src="/images/docker-%E6%8B%89%E5%8F%96%E5%A4%B1%E8%B4%A5-clash-for-linux%E4%B8%9D%E6%BB%91%E6%8B%89%E5%8F%96/image-20250515100912886.png" alt="image-20250515100912886"></p><h4 id="3-启动"><a href="#3-启动" class="headerlink" title="3.启动"></a>3.启动</h4><p>clash打开首页下拉打开系统代理，并且把网络代理设置成clash代理</p><p>![images&#x2F;docker-拉取失败-clash-for-linux丝滑拉取&#x2F;image-20250515101233442.png)</p><h2 id="docker配置文件修改"><a href="#docker配置文件修改" class="headerlink" title="docker配置文件修改"></a>docker配置文件修改</h2><p>进入到你要拉取的镜像的目录。</p><p>编辑docker-compose.yml</p><p>加上下面缺失代码，让镜像拉取走代理</p><figure class="highlight dts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs dts"><span class="hljs-symbol">build:</span><br><span class="hljs-symbol">  context:</span> .<br><span class="hljs-symbol">  network:</span> host                <span class="hljs-meta"># 使用宿主网络，继承 Clash 代理和 DNS</span><br><span class="hljs-symbol">  args:</span><br><span class="hljs-symbol">    HTTP_PROXY:</span> <span class="hljs-string">&quot;http://127.0.0.1:7897&quot;</span>    <span class="hljs-meta"># Clash HTTP 代理端口，请与 Clash Verge 中“混合代理端口”保持一致</span><br><span class="hljs-symbol">    HTTPS_PROXY:</span> <span class="hljs-string">&quot;http://127.0.0.1:7897&quot;</span>   <span class="hljs-meta"># Clash HTTPS 代理端口</span><br></code></pre></td></tr></table></figure><h2 id="心得"><a href="#心得" class="headerlink" title="心得"></a>心得</h2><p><strong>看起来很简单是吧。真是花了我两天去搞，一开始不是走代理，就是简单修改dockerfile和dockercompose.后面发现依旧不理想，甚至让我到了抓狂的地步。好吧，也没有那么夸张。后面尝试了利用走梯子，其中首先遇到了命令方式配置，行不通，我的问题吧，反正我是不会。又下载了图形，经过几次的更改后，终于找到极品方法。HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH</strong></p>]]></content>
+    
+    
+    <categories>
+      
+      <category>乱七八糟</category>
+      
+    </categories>
+    
+    
+    <tags>
+      
+      <tag>docker拉取失败</tag>
+      
+      <tag>怎么丝滑拉取镜像</tag>
+      
+    </tags>
+    
+  </entry>
+  
+  
+  
+  <entry>
     <title>Hello World</title>
     <link href="/2025/05/19/hello-world/"/>
     <url>/2025/05/19/hello-world/</url>
