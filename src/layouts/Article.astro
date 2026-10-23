@@ -1,0 +1,36 @@
+---
+import Base from './Base.astro';
+import { dateLabel, readingTime, categoryLabel, type Post } from '../lib/posts';
+interface Props { post: Post; headings: { depth: number; slug: string; text: string }[]; related: Post[]; }
+const { post, headings, related } = Astro.props;
+const toc = headings.filter(h => h.depth <= 3);
+---
+<Base title={post.data.title} description={post.data.description} article>
+  <div class="reading-progress" aria-hidden="true"><span id="reading-progress-fill"></span></div>
+  <div class="wrap article-page"><a class="breadcrumb" href="/articles/">← 返回文章归档</a>
+    <header class="article-header">
+      <h1>{post.data.title}</h1>
+      <div class="article-meta"><span>IE</span><span>·</span><time datetime={post.data.date.toISOString()}>{dateLabel(post.data.date)}</time><span>·</span><a href={`/articles/?category=${encodeURIComponent(post.data.categories)}`}>{categoryLabel(post.data.categories)}</a><span>·</span><span>{readingTime(post)} 分钟阅读</span></div>
+      <div class="article-tags">{post.data.tags?.map(tag => <a href={`/articles/?tag=${encodeURIComponent(tag)}`}>#{tag}</a>)}</div>
+    </header>
+    <div class="article-grid"><div><article class="prose" id="article-body"><slot /></article><div class="article-license"><span>作者 IE · CC BY 4.0</span><a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noopener noreferrer">转载时请注明出处</a></div></div>
+      <aside class="toc"><details open><summary>目录</summary><nav aria-label="文章目录">{toc.map(h => <a class:list={['toc-link', { nested: h.depth === 3 }]} href={`#${h.slug}`}>{h.text}</a>)}</nav></details><a class="toc-back" href="#main">回到顶部 ↑</a></aside>
+    </div>
+    {related.length > 0 && <section class="related-section"><h2>其他文章</h2><ul>{related.map(p => <li><a href={p.data.legacyPath}>{p.data.title}</a><time>{dateLabel(p.data.date)}</time></li>)}</ul></section>}
+  </div>
+  <script>
+    for (const pre of document.querySelectorAll<HTMLPreElement>('.prose pre')) {
+      const button = document.createElement('button'); button.className = 'code-copy'; button.textContent = '复制'; button.setAttribute('aria-label', '复制代码');
+      button.addEventListener('click', async () => { try { await navigator.clipboard.writeText(pre.querySelector('code')?.textContent || ''); button.textContent = '已复制'; } catch { button.textContent = '复制失败，请手动选择'; } setTimeout(() => button.textContent = '复制', 2200); });
+      pre.append(button);
+    }
+    const fill = document.querySelector<HTMLElement>('#reading-progress-fill')!;
+    const body = document.querySelector<HTMLElement>('#article-body')!;
+    const progress = () => { const start = body.offsetTop; const total = Math.max(1, body.offsetHeight - innerHeight); fill.style.width = `${Math.max(0, Math.min(100, (scrollY - start) / total * 100))}%`; };
+    addEventListener('scroll', progress, { passive: true }); addEventListener('resize', progress); progress();
+    const links = [...document.querySelectorAll<HTMLAnchorElement>('.toc-link')];
+    const observer = new IntersectionObserver(entries => { for (const entry of entries) if (entry.isIntersecting) links.forEach(a => a.classList.toggle('active', decodeURIComponent(a.hash.slice(1)) === entry.target.id)); }, { rootMargin: '-10% 0px -65% 0px' });
+    document.querySelectorAll('.prose h1[id], .prose h2[id], .prose h3[id]').forEach(h => observer.observe(h));
+    if (matchMedia('(max-width: 900px)').matches) document.querySelector('.toc details')?.removeAttribute('open');
+  </script>
+</Base>

@@ -1,0 +1,5 @@
+---
+interface Props { target: string; }
+const { target } = Astro.props;
+---
+<!doctype html><html lang="zh-CN"><head><meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1" /><meta http-equiv="refresh" content={`0;url=${target}`} /><meta name="robots" content="noindex" /><link rel="canonical" href={new URL(target, Astro.site)} /><title>页面已迁移 · IE / 反复思考</title></head><body><p>页面已迁移，<a href={target}>前往新的文章归档 →</a></p></body></html>

@@ -1,0 +1,90 @@
+[
+  {
+    "slug": "archives",
+    "redirect": "/articles/"
+  },
+  {
+    "slug": "archives/2025",
+    "redirect": "/articles/"
+  },
+  {
+    "slug": "archives/2025/03",
+    "redirect": "/articles/"
+  },
+  {
+    "slug": "archives/2025/04",
+    "redirect": "/articles/"
+  },
+  {
+    "slug": "archives/2025/05",
+    "redirect": "/articles/"
+  },
+  {
+    "slug": "categories",
+    "redirect": "/articles/"
+  },
+  {
+    "slug": "categories/漏洞复现",
+    "redirect": "/articles/?category=%E5%AE%89%E5%85%A8%E7%A0%94%E7%A9%B6"
+  },
+  {
+    "slug": "categories/靶场",
+    "redirect": "/articles/?category=%E5%AE%9E%E9%AA%8C%E8%AE%B0%E5%BD%95"
+  },
+  {
+    "slug": "tags",
+    "redirect": "/articles/"
+  },
+  {
+    "slug": "tags/CVE-2025-29927",
+    "redirect": "/articles/?tag=CVE-2025-29927"
+  },
+  {
+    "slug": "tags/linux",
+    "redirect": "/articles/?tag=linux"
+  },
+  {
+    "slug": "tags/next-js-中间件鉴权绕过",
+    "redirect": "/articles/?tag=next.js-%E4%B8%AD%E9%97%B4%E4%BB%B6%E9%89%B4%E6%9D%83%E7%BB%95%E8%BF%87"
+  },
+  {
+    "slug": "tags/Shellshock",
+    "redirect": "/articles/?tag=Shellshock"
+  },
+  {
+    "slug": "tags/shiro",
+    "redirect": "/articles/?tag=shiro"
+  },
+  {
+    "slug": "tags/ssrf使用教学",
+    "redirect": "/articles/?tag=ssrf%E4%BD%BF%E7%94%A8%E6%95%99%E5%AD%A6"
+  },
+  {
+    "slug": "tags/ssrf打穿内网",
+    "redirect": "/articles/?tag=ssrf%E6%89%93%E7%A9%BF%E5%86%85%E7%BD%91"
+  },
+  {
+    "slug": "tags/vite",
+    "redirect": "/articles/?tag=vite"
+  },
+  {
+    "slug": "tags/拦截器绕过",
+    "redirect": "/articles/?tag=%E6%8B%A6%E6%88%AA%E5%99%A8%E7%BB%95%E8%BF%87"
+  },
+  {
+    "slug": "tags/文件读取",
+    "redirect": "/articles/?tag=%E6%96%87%E4%BB%B6%E8%AF%BB%E5%8F%96"
+  },
+  {
+    "slug": "tags/默认密钥爆破",
+    "redirect": "/articles/?tag=%E9%BB%98%E8%AE%A4%E5%AF%86%E9%92%A5%E7%88%86%E7%A0%B4"
+  },
+  {
+    "slug": "page/2",
+    "redirect": "/articles/"
+  },
+  {
+    "slug": "links",
+    "redirect": "/about/"
+  }
+]

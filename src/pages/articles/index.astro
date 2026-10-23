@@ -1,0 +1,40 @@
+---
+import Base from '../../layouts/Base.astro';
+import PostRow from '../../components/PostRow.astro';
+import { getPosts, categories, categoryLabel } from '../../lib/posts';
+const posts = await getPosts();
+const tags = [...new Set(posts.flatMap(p => p.data.tags || []))];
+---
+<Base title="文章归档" description="IE 的全部文章，可以按分类、标签和关键词筛选。">
+  <div class="wrap archive"><div class="page-heading"><h1>文章归档</h1><p>共 {posts.length} 篇文章</p></div>
+    <div class="archive-controls"><div class="filter-buttons" role="group" aria-label="按分类筛选"><button data-filter="all" class="active" aria-pressed="true">全部 <span>{posts.length}</span></button>{categories.filter(c => posts.some(p => p.data.categories === c)).map(c => <button data-filter={c} aria-pressed="false">{categoryLabel(c)}<span>{posts.filter(p => p.data.categories === c).length}</span></button>)}</div><label class="archive-input-label"><span class="sr-only">筛选文章标题或标签</span><input id="archive-input" type="search" placeholder="筛选标题、标签…" /></label></div>
+    <div class="archive-tags"><label for="tag-filter">标签</label><select id="tag-filter"><option value="">全部标签</option>{tags.map(tag => <option value={tag}>{tag}</option>)}</select><button id="clear-filters">重置筛选 ↺</button><span id="filter-status" aria-live="polite">共 {posts.length} 篇</span></div>
+    <div class="archive-list">{posts.map((post, index) => <PostRow post={post} index={index} />)}</div><p id="archive-empty" class="empty-state" hidden>没有匹配的文章。可以更换关键词，或重置筛选。</p>
+  </div>
+  <script>
+    const buttons = [...document.querySelectorAll<HTMLButtonElement>('[data-filter]')];
+    const rows = [...document.querySelectorAll<HTMLElement>('[data-post]')];
+    const input = document.querySelector<HTMLInputElement>('#archive-input')!;
+    const tagSelect = document.querySelector<HTMLSelectElement>('#tag-filter')!;
+    const params = new URLSearchParams(location.search);
+    let category = buttons.some(b => b.dataset.filter === params.get('category')) ? params.get('category')! : 'all';
+    input.value = params.get('q') || '';
+    tagSelect.value = params.get('tag') || '';
+    const apply = () => {
+      let count = 0;
+      for (const row of rows) {
+        const visible = (category === 'all' || row.dataset.category === category) && (!tagSelect.value || JSON.parse(row.dataset.tags || '[]').includes(tagSelect.value)) && (row.dataset.title || '').toLowerCase().includes(input.value.trim().toLowerCase());
+        row.hidden = !visible; if (visible) count++;
+      }
+      buttons.forEach(b => { b.classList.toggle('active', b.dataset.filter === category); b.setAttribute('aria-pressed', String(b.dataset.filter === category)); });
+      document.querySelector('#filter-status')!.textContent = `共 ${count} 篇`;
+      (document.querySelector('#archive-empty') as HTMLElement).hidden = count > 0;
+      const query = new URLSearchParams(); if (category !== 'all') query.set('category', category); if (tagSelect.value) query.set('tag', tagSelect.value); if (input.value.trim()) query.set('q', input.value.trim());
+      history.replaceState(null, '', `/articles/${query.size ? '?' + query.toString() : ''}`);
+    };
+    buttons.forEach(b => b.addEventListener('click', () => { category = b.dataset.filter!; apply(); }));
+    input.addEventListener('input', apply); tagSelect.addEventListener('change', apply);
+    document.querySelector('#clear-filters')?.addEventListener('click', () => { category = 'all'; input.value = ''; tagSelect.value = ''; apply(); });
+    apply();
+  </script>
+</Base>

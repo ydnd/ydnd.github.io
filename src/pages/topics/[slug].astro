@@ -1,0 +1,17 @@
+---
+import Base from '../../layouts/Base.astro';
+import PostRow from '../../components/PostRow.astro';
+import { getPosts } from '../../lib/posts';
+import { topics } from '../../lib/topics';
+export function getStaticPaths() {
+  return topics.map(topic => ({ params: { slug: topic.slug } }));
+}
+const topic = topics.find(item => item.slug === Astro.params.slug)!;
+const posts = (await getPosts()).filter(topic.matches);
+---
+<Base title={topic.title} description={topic.description}>
+  <div class="wrap topics-page">
+    <div class="page-heading"><a class="breadcrumb" href="/topics/">研究专题</a><h1>{topic.title}</h1><p>{topic.description} 共 {posts.length} 篇文章。</p></div>
+    {posts.map(post => <PostRow post={post} />)}
+  </div>
+</Base>

@@ -1,0 +1,90 @@
+---
+import '../styles/global.css';
+import { getPosts, categoryLabel } from '../lib/posts';
+interface Props { title?: string; description?: string; article?: boolean; }
+const { title, description = 'IE 的个人安全研究博客，关注 Web 安全、漏洞分析与 CTF。', article = false } = Astro.props;
+const canonical = new URL(Astro.url.pathname, Astro.site);
+const posts = await getPosts();
+const searchData = posts.map(p => ({ title: p.data.title, category: categoryLabel(p.data.categories), tags: p.data.tags || [], description: p.data.description, url: p.data.legacyPath, body: p.body || '' }));
+const current = Astro.url.pathname;
+---
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="color-scheme" content="light dark" />
+    <title>{title ? `${title} - IEeee` : 'IEeee'}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="alternate" type="application/rss+xml" title="IE / 反复思考" href="/rss.xml" />
+    <meta property="og:title" content={title || 'IEeee'} />
+    <meta property="og:description" content={description} />
+    <meta property="og:type" content={article ? 'article' : 'website'} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:locale" content="zh_CN" />
+    <meta name="theme-color" content="#ffffff" />
+    <script is:inline>
+      try { const theme = localStorage.getItem('ie-theme'); document.documentElement.dataset.theme = theme || (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'); } catch { document.documentElement.dataset.theme = 'light'; }
+    </script>
+  </head>
+  <body>
+    <a class="skip-link" href="#main">跳到内容</a>
+    <header class="site-header wrap">
+      <a class="brand" href="/" aria-label="IE 博客首页">IEeee<span>反复思考</span></a>
+      <nav class="site-nav" aria-label="主导航">
+        <a href="/" aria-current={current === '/' ? 'page' : undefined}>首页</a>
+        <a href="/articles/" aria-current={current.startsWith('/articles') ? 'page' : undefined}>文章归档</a>
+        <a href="/topics/" aria-current={current.startsWith('/topics') ? 'page' : undefined}>研究专题</a>
+        <a href="/2025/06/01/About-me/" aria-current={current.includes('/About-me/') ? 'page' : undefined}>关于我</a>
+      </nav>
+      <div class="header-tools">
+        <button id="search-open" class="search-trigger" aria-label="搜索文章" title="搜索文章（Ctrl / Cmd + K）"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m16 16 5 5"/></svg><span>搜索</span></button>
+        <button id="theme-toggle" class="icon-button" aria-label="切换深浅色主题"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 1v3m0 16v3M1 12h3m16 0h3M4 4l2 2m12 12 2 2M4 20l2-2M18 6l2-2"/></svg></button>
+      </div>
+    </header>
+    <main id="main"><slot /></main>
+    <footer class="site-footer wrap"><span>IEeee · 反复思考</span><div><a href="/rss.xml">RSS</a><a href="https://github.com/ydnd" target="_blank" rel="noopener noreferrer">GitHub</a></div></footer>
+    <dialog id="search-dialog" class="search-dialog" aria-labelledby="search-title">
+      <div class="search-top"><h2 id="search-title">搜索文章</h2><button id="search-close" class="icon-button" aria-label="关闭搜索">✕</button></div>
+      <label class="sr-only" for="search-input">文章标题、标签或正文关键词</label>
+      <input id="search-input" type="search" placeholder="输入标题、CVE 编号或正文关键词…" autocomplete="off" />
+      <p id="search-status" class="search-status" aria-live="polite">输入关键词搜索文章。</p>
+      <div id="search-results" class="search-results"></div>
+      <div class="search-bottom"><span>搜索标题、标签与正文</span><span><kbd>ESC</kbd> 关闭</span></div>
+    </dialog>
+    <script id="search-data" type="application/json" set:html={JSON.stringify(searchData).replaceAll('<', '\\u003c')} />
+    <script>
+      const dialog = document.querySelector<HTMLDialogElement>('#search-dialog')!;
+      const input = document.querySelector<HTMLInputElement>('#search-input')!;
+      const results = document.querySelector('#search-results')!;
+      const status = document.querySelector('#search-status')!;
+      const data = JSON.parse(document.querySelector('#search-data')!.textContent || '[]');
+      const open = () => { if (!dialog.open) dialog.showModal(); input.focus(); };
+      document.querySelector('#search-open')?.addEventListener('click', open);
+      document.querySelector('#search-close')?.addEventListener('click', () => dialog.close());
+      dialog.addEventListener('click', e => { if (e.target === dialog) { const r = dialog.getBoundingClientRect(); if (e.clientX < r.left || e.clientX > r.right || e.clientY < r.top || e.clientY > r.bottom) dialog.close(); } });
+      document.addEventListener('keydown', e => { if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k') { e.preventDefault(); open(); } });
+      input.addEventListener('input', () => {
+        const terms = input.value.trim().toLowerCase().split(/\s+/).filter(Boolean);
+        results.replaceChildren();
+        if (!terms.length) { status.textContent = '输入关键词搜索文章。'; return; }
+        const matches = data.filter((p: any) => terms.every(t => `${p.title} ${p.tags.join(' ')} ${p.description} ${p.body}`.toLowerCase().includes(t)));
+        status.textContent = matches.length ? `找到 ${matches.length} 篇文章` : '未找到相关文章，请尝试其他关键词。';
+        for (const post of matches) {
+          const a = document.createElement('a'); a.href = post.url; a.className = 'search-result';
+          const cat = document.createElement('span'); cat.className = 'eyebrow'; cat.textContent = post.category;
+          const title = document.createElement('strong'); title.textContent = post.title;
+          const desc = document.createElement('p'); desc.textContent = post.description;
+          a.append(cat, title, desc); results.append(a);
+        }
+      });
+      document.querySelector('#theme-toggle')?.addEventListener('click', () => {
+        const next = document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark';
+        document.documentElement.dataset.theme = next;
+        try { localStorage.setItem('ie-theme', next); } catch {}
+      });
+    </script>
+  </body>
+</html>

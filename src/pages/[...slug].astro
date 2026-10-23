@@ -1,0 +1,20 @@
+---
+import { getCollection, render } from 'astro:content';
+import Article from '../layouts/Article.astro';
+import LegacyRedirect from '../components/LegacyRedirect.astro';
+import type { Post } from '../lib/posts';
+import { getPosts } from '../lib/posts';
+import redirects from '../../migration/legacy-routes.json';
+export async function getStaticPaths() {
+  return [
+    ...(await getCollection('posts')).map(post => ({ params: { slug: post.data.legacyPath.replace(/^\//, '').replace(/\/$/, '') }, props: { post } })),
+    ...redirects.map(route => ({ params: { slug: route.slug }, props: { redirect: route.redirect } }))
+  ];
+}
+const { post, redirect } = Astro.props as { post?: Post; redirect?: string };
+const rendered = post ? await render(post) : undefined;
+const Content = rendered?.Content;
+const all = await getPosts();
+const related = post ? all.filter(p => p.id !== post.id).sort((a, b) => Number(b.data.categories === post.data.categories) - Number(a.data.categories === post.data.categories)).slice(0, 2) : [];
+---
+{post && rendered && Content ? <Article post={post} headings={rendered.headings} related={related}><Content /></Article> : <LegacyRedirect target={redirect || '/articles/'} />}

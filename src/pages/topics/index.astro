@@ -1,0 +1,21 @@
+---
+import Base from '../../layouts/Base.astro';
+import { getPosts } from '../../lib/posts';
+import { topics } from '../../lib/topics';
+const posts = await getPosts();
+---
+<Base title="研究专题" description="按技术方向汇集漏洞分析与实验文章。">
+  <div class="wrap topics-page">
+    <div class="page-heading"><h1>研究专题</h1><p>按组件与技术方向组织的文章。</p></div>
+    <div class="topic-list">
+      {topics.map(topic => {
+        const articles = posts.filter(topic.matches);
+        return <section class="topic-entry">
+          <div class="topic-entry-heading"><h2><a href={`/topics/${topic.slug}/`}>{topic.title}</a></h2><span>{articles.length} 篇文章</span></div>
+          <p>{topic.description}</p>
+          <ul>{articles.map(post => <li><a href={post.data.legacyPath}>{post.data.title}</a></li>)}</ul>
+        </section>;
+      })}
+    </div>
+  </div>
+</Base>

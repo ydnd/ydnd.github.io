@@ -1,0 +1,45 @@
+---
+import Base from '../layouts/Base.astro';
+import PostRow from '../components/PostRow.astro';
+import { getPosts, categories, dateLabel, categoryLabel } from '../lib/posts';
+import { topics } from '../lib/topics';
+const posts = await getPosts();
+const featured = posts.find(post => post.data.legacyPath.includes('/next.js-'));
+---
+<Base>
+  <div class="wrap home-layout">
+    <section class="home-posts" aria-labelledby="posts-title">
+      {featured && <article class="pinned-article" aria-label="置顶文章">
+        <div class="pinned-meta"><span class="pin-label">置顶</span><span>漏洞分析</span><time datetime={featured.data.date.toISOString()}>{dateLabel(featured.data.date)}</time></div>
+        <h2><a href={featured.data.legacyPath}>{featured.data.title}</a></h2>
+        <p>Next.js 中间件鉴权绕过的复现过程与源码分析。</p>
+        <a class="pinned-cve" href="/articles/?tag=CVE-2025-29927">CVE-2025-29927</a>
+      </article>}
+      <div class="section-heading"><h1 id="posts-title">最新文章</h1><a href="/articles/">全部 {posts.length} 篇</a></div>
+      {posts.map(post => <PostRow post={post} />)}
+    </section>
+    <aside class="home-sidebar">
+      <section>
+        <div class="author-identity"><span class="author-monogram" aria-hidden="true">IE</span><div><h2>IE</h2><span>Web 安全 · CTF</span></div></div>
+        <p>关注 Web 安全，研究漏洞原理与复现方法。</p>
+        <div class="author-links"><a href="/2025/06/01/About-me/">关于我</a><a href="https://github.com/ydnd" target="_blank" rel="noopener noreferrer">GitHub</a></div>
+      </section>
+      <section class="sidebar-topics">
+        <h2><a href="/topics/">研究专题</a></h2>
+        <ul>{topics.map(topic => <li><a href={`/topics/${topic.slug}/`}>{topic.title}<span>{posts.filter(topic.matches).length} 篇</span></a></li>)}</ul>
+      </section>
+      <section>
+        <h2>分类</h2>
+        <ul class="category-list">
+          {categories.map(category => {
+            const count = posts.filter(p => p.data.categories === category).length;
+            return count > 0 && <li><a href={`/articles/?category=${encodeURIComponent(category)}`}>{categoryLabel(category)}<span>{count}</span></a></li>;
+          })}
+        </ul>
+      </section>
+      <section class="sidebar-links">
+        <a href="/articles/">全部归档</a><a href="/rss.xml">RSS 订阅</a>
+      </section>
+    </aside>
+  </div>
+</Base>

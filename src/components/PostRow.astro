@@ -1,0 +1,12 @@
+---
+import { dateLabel, categoryLabel, type Post } from '../lib/posts';
+import { articleSignals } from '../lib/topics';
+interface Props { post: Post; index?: number; }
+const { post } = Astro.props;
+const signals = articleSignals(post);
+---
+<article class="post-row" data-post data-category={post.data.categories} data-tags={JSON.stringify(post.data.tags || [])} data-title={`${post.data.title} ${post.data.description} ${(post.data.tags || []).join(' ')}`}>
+  <div class="post-meta"><time datetime={post.data.date.toISOString()}>{dateLabel(post.data.date)}</time><span aria-hidden="true">·</span><a href={`/articles/?category=${encodeURIComponent(post.data.categories)}`}>{categoryLabel(post.data.categories)}</a>{signals.length > 0 && <div class="post-signals">{signals.map(signal => <a href={signal.url}>{signal.label}</a>)}</div>}</div>
+  <h2><a href={post.data.legacyPath}>{post.data.title}</a></h2>
+  <p>{post.data.description}</p>
+</article>
