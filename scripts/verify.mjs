@@ -23,6 +23,10 @@ for (const file of files) {
   images += [...html.matchAll(/<img\b/g)].length;
 }
 const manifest = JSON.parse(fs.readFileSync('migration/manifest.json', 'utf8'));
+const redirects = JSON.parse(fs.readFileSync('migration/legacy-routes.json', 'utf8'));
+for (const { slug } of redirects) {
+  assert.ok(fs.existsSync(path.join(root, slug, 'index.html')), `Preserved legacy navigation: ${slug}`);
+}
 for (const { url } of manifest) {
   assert.ok(fs.existsSync(path.join(root, url, 'index.html')), `Preserved article route: ${url}`);
 }

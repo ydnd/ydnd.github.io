@@ -86,5 +86,37 @@
   {
     "slug": "links",
     "redirect": "/about/"
+  },
+  {
+    "slug": "archives/2025/06",
+    "redirect": "/articles/"
+  },
+  {
+    "slug": "categories/CTF",
+    "redirect": "/articles/?category=CTF"
+  },
+  {
+    "slug": "categories/乱七八糟",
+    "redirect": "/articles/?category=%E5%B7%A5%E5%85%B7%E4%B8%8E%E7%8E%AF%E5%A2%83"
+  },
+  {
+    "slug": "categories/日常",
+    "redirect": "/articles/?category=%E9%9A%8F%E7%AC%94"
+  },
+  {
+    "slug": "tags/ISCC",
+    "redirect": "/articles/?tag=ISCC"
+  },
+  {
+    "slug": "tags/docker拉取失败",
+    "redirect": "/articles/?tag=docker%E6%8B%89%E5%8F%96%E5%A4%B1%E8%B4%A5"
+  },
+  {
+    "slug": "tags/mobile",
+    "redirect": "/articles/?tag=mobile"
+  },
+  {
+    "slug": "tags/怎么丝滑拉取镜像",
+    "redirect": "/articles/?tag=%E6%80%8E%E4%B9%88%E4%B8%9D%E6%BB%91%E6%8B%89%E5%8F%96%E9%95%9C%E5%83%8F"
   }
 ]
