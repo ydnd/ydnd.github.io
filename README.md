@@ -1,6 +1,8 @@
-# IE / 反复思考
+# IE · Security Research
 
-Astro + 自定义界面的个人安全研究博客。纯静态构建，不需要数据库或后台服务。
+个人安全研究博客，关注 Web 应用安全、Java 组件漏洞与 CTF。基于 Astro 构建，使用自定义界面，部署于 GitHub Pages。
+
+[访问博客](https://ydnd.github.io/) · [研究专题](https://ydnd.github.io/topics/) · [文章归档](https://ydnd.github.io/articles/) · [关于我](https://ydnd.github.io/2025/06/01/About-me/) · [RSS](https://ydnd.github.io/rss.xml)
 
 ## 本地运行
 
@@ -20,10 +22,10 @@ npm run verify
 npm run preview
 ```
 
-## 已完成
+## 站点功能
 
 - 自定义响应式首页、文章归档、关于、404。
-- 冷蓝色强调色、置顶漏洞分析、作者侧栏、CVE/比赛/技术类型标识。
+- 置顶漏洞分析、作者介绍、CVE/比赛/技术类型标识。
 - Apache Shiro、Web 组件漏洞、SSRF 三个研究专题。专题在 `src/lib/topics.ts` 中维护。
 - 标题、摘要、标签、正文搜索，快捷键 Ctrl/Cmd + K。
 - 分类、标签、关键词组合筛选；筛选条件保存在网址中。
@@ -46,7 +48,7 @@ categories: 安全研究
 tags:
   - Web
 description: 用一两句话说明文章解决的问题。
-legacyPath: /2026/10/23/my-new-note/
+legacyPath: /2026/10/23/article-slug/
 ---
 ```
 
